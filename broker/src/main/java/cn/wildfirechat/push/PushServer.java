@@ -38,6 +38,7 @@ public class PushServer {
         int PUSH_MESSAGE_TYPE_VOIP_ANSWER = 4;
         int PUSH_MESSAGE_TYPE_RECALLED = 5;
         int PUSH_MESSAGE_TYPE_DELETED = 6;
+        int PUSH_MESSAGE_TYPE_VOIP_CANCEL = 7;
     }
 
     private static PushServer INSTANCE = new PushServer();
@@ -82,14 +83,20 @@ public class PushServer {
 
         MemorySessionStore.Session session = sessionsStore.getSession(deviceId);
         if (StringUtil.isNullOrEmpty(session.getDeviceToken())) {
-            LOG.warn("Device token is empty for device {}", deviceId);
-            return;
+            if (pushMessage.pushMessageType != PushMessageType.PUSH_MESSAGE_TYPE_VOIP_CANCEL || StringUtil.isNullOrEmpty(session.getVoipDeviceToken())) {
+                LOG.warn("Device token is empty for device {}", deviceId);
+                return;
+            }
         }
 
         pushMessage.packageName = session.getAppName();
         pushMessage.pushType = session.getPushType();
         pushMessage.pushContent = pushContent;
-        pushMessage.deviceToken = session.getDeviceToken();
+        if (pushMessage.pushMessageType == PushMessageType.PUSH_MESSAGE_TYPE_VOIP_CANCEL && StringUtil.isNullOrEmpty(session.getDeviceToken())) {
+            pushMessage.deviceToken = session.getVoipDeviceToken();
+        } else {
+            pushMessage.deviceToken = session.getDeviceToken();
+        }
         pushMessage.userId = session.getUsername();
         if (session.getPlatform() == ProtoConstants.Platform.Platform_iOS ||
             session.getPlatform() == ProtoConstants.Platform.Platform_iPad ||
