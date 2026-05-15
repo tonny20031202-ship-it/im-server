@@ -38,6 +38,7 @@ public class PushServer {
         int PUSH_MESSAGE_TYPE_VOIP_ANSWER = 4;
         int PUSH_MESSAGE_TYPE_RECALLED = 5;
         int PUSH_MESSAGE_TYPE_DELETED = 6;
+        int PUSH_MESSAGE_TYPE_VOIP_CANCEL = 7;
     }
 
     private static PushServer INSTANCE = new PushServer();
@@ -81,6 +82,15 @@ public class PushServer {
         }
 
         MemorySessionStore.Session session = sessionsStore.getSession(deviceId);
+
+        if (pushMessage.pushMessageType == PushMessageType.PUSH_MESSAGE_TYPE_VOIP_CANCEL) {
+            if (session.getPlatform() != ProtoConstants.Platform.Platform_iOS &&
+                session.getPlatform() != ProtoConstants.Platform.Platform_iPad &&
+                session.getPlatform() != ProtoConstants.Platform.Platform_AppleTV) {
+                return;
+            }
+        }
+
         if (StringUtil.isNullOrEmpty(session.getDeviceToken())) {
             LOG.warn("Device token is empty for device {}", deviceId);
             return;
