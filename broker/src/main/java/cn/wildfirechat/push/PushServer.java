@@ -38,6 +38,7 @@ public class PushServer {
         int PUSH_MESSAGE_TYPE_VOIP_ANSWER = 4;
         int PUSH_MESSAGE_TYPE_RECALLED = 5;
         int PUSH_MESSAGE_TYPE_DELETED = 6;
+        int PUSH_MESSAGE_TYPE_VOIP_CANCEL = 7;
     }
 
     private static PushServer INSTANCE = new PushServer();
@@ -78,6 +79,10 @@ public class PushServer {
         if (pushMessage.pushMessageType == PushMessageType.PUSH_MESSAGE_TYPE_NORMAL && StringUtil.isNullOrEmpty(pushContent)) {
             LOG.info("push content empty, deviceId {}", deviceId);
             return;
+        }
+
+        if (pushMessage.pushMessageType == PushMessageType.PUSH_MESSAGE_TYPE_VOIP_CANCEL) {
+            LOG.info("VoIP cancel push for deviceId {}", deviceId);
         }
 
         MemorySessionStore.Session session = sessionsStore.getSession(deviceId);

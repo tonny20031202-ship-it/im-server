@@ -1,0 +1,23 @@
+diff --git a/broker/src/main/java/cn/wildfirechat/push/PushServer.java b/broker/src/main/java/cn/wildfirechat/push/PushServer.java
+index ceb69628..883e7e6c 100644
+--- a/broker/src/main/java/cn/wildfirechat/push/PushServer.java
++++ b/broker/src/main/java/cn/wildfirechat/push/PushServer.java
+@@ -38,6 +38,7 @@ public class PushServer {
+         int PUSH_MESSAGE_TYPE_VOIP_ANSWER = 4;
+         int PUSH_MESSAGE_TYPE_RECALLED = 5;
+         int PUSH_MESSAGE_TYPE_DELETED = 6;
++        int PUSH_MESSAGE_TYPE_VOIP_CANCEL = 7;
+     }
+ 
+     private static PushServer INSTANCE = new PushServer();
+@@ -80,6 +81,10 @@ public class PushServer {
+             return;
+         }
+ 
++        if (pushMessage.pushMessageType == PushMessageType.PUSH_MESSAGE_TYPE_VOIP_CANCEL) {
++            LOG.info("VoIP cancel push for deviceId {}", deviceId);
++        }
++
+         MemorySessionStore.Session session = sessionsStore.getSession(deviceId);
+         if (StringUtil.isNullOrEmpty(session.getDeviceToken())) {
+             LOG.warn("Device token is empty for device {}", deviceId);
