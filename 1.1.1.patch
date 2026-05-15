@@ -1,0 +1,10 @@
+--- a/PushServer.java
++++ b/PushServer.java
+@@ -34,6 +34,7 @@
+         int PUSH_MESSAGE_TYPE_VOIP_ANSWER = 4;
+         int PUSH_MESSAGE_TYPE_RECALLED = 5;
+         int PUSH_MESSAGE_TYPE_DELETED = 6;
++        int PUSH_MESSAGE_TYPE_VOIP_CANCEL = 7;
+     }
+ 
+     private static PushServer INSTANCE = new PushServer();
